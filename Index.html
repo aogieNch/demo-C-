@@ -1,66 +1,57 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Shopping Cart</title>
+  <title>To-Do List</title>
   <style>
     /* Basic CSS for styling */
   </style>
 </head>
 <body>
-  <h1>Products</h1>
-  <ul id="productList"></ul>
-  <hr>
-  <h2>Shopping Cart</h2>
-  <ul id="cartList"></ul>
-  <p>Total: $<span id="totalPrice"></span></p>
+  <h1>To-Do List</h1>
+  <input type="text" id="newTask" placeholder="Add a new task">
+  <button id="addTask">Add</button>
+  <ul id="taskList"></ul>
 
   <script>
-    const productList = document.getElementById('productList');
-    const cartList = document.getElementById('cartList');
-    const totalPriceSpan = document.getElementById('totalPrice');
-    let cartItems = []; // Array to store cart items (replace with session storage)
+    const taskList = document.getElementById('taskList');
+    const newTaskInput = document.getElementById('newTask');
+    const addTaskButton = document.getElementById('addTask');
 
-    // Simulate product data (replace with actual product retrieval)
-    const products = [
-      { name: 'Product 1', price: 10.00 },
-      { name: 'Product 2', price: 15.00 },
-      // ... more products
-    ];
-
-    function displayProducts() {
-      productList.innerHTML = ''; // Clear existing list
-      products.forEach(product => {
+    function displayTasks(tasks) {
+      taskList.innerHTML = ''; // Clear existing list
+      tasks.forEach(task => {
         const listItem = document.createElement('li');
-        listItem.innerText = `${product.name} - $${product.price}`;
-        listItem.addEventListener('click', () => addToCart(product));
-        productList.appendChild(listItem);
+        listItem.innerText = task.Description;
+        // Add checkbox for completed tasks (not implemented here)
+        taskList.appendChild(listItem);
       });
     }
 
-    function addToCart(product) {
-      cartItems.push(product);
-      updateCartList();
-      calculateTotalPrice();
+    addTaskButton.addEventListener('click', () => {
+      const taskText = newTaskInput.value;
+      addTask(taskText);
+      newTaskInput.value = ''; // Clear input field
+    });
+
+    function addTask(taskText) {
+      fetch('/Home/AddTask', {
+        method: 'POST',
+        body: JSON.stringify({ description: taskText }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.json())
+      .then(data => {
+        tasks = data; // Update local task list
+        displayTasks(tasks);
+      })
+      .catch(error => console.error(error));
     }
 
-    function updateCartList() {
-      cartList.innerHTML = ''; // Clear existing list
-      cartItems.forEach(item => {
-        const listItem = document.createElement('li');
-        listItem.innerText = `${item.name} - $${item.price}`;
-        // Add option to remove item from cart (not implemented here)
-        cartList.appendChild(listItem);
-      });
-    }
-
-    function calculateTotalPrice() {
-      let total = 0;
-      cartItems.forEach(item => total += item.price);
-      totalPriceSpan.innerText = total.toFixed(2);
-    }
-
-    displayProducts();
+    // Fetch initial tasks on page load
+    fetch('/Home/Index')
+    .then(response => response.json())
+    .then(data => displayTasks(data))
+    .catch(error => console.error(error));
   </script>
 </body>
 </html>
