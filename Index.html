@@ -1,1 +1,66 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shopping Cart</title>
+  <style>
+    /* Basic CSS for styling */
+  </style>
+</head>
+<body>
+  <h1>Products</h1>
+  <ul id="productList"></ul>
+  <hr>
+  <h2>Shopping Cart</h2>
+  <ul id="cartList"></ul>
+  <p>Total: $<span id="totalPrice"></span></p>
+
+  <script>
+    const productList = document.getElementById('productList');
+    const cartList = document.getElementById('cartList');
+    const totalPriceSpan = document.getElementById('totalPrice');
+    let cartItems = []; // Array to store cart items (replace with session storage)
+
+    // Simulate product data (replace with actual product retrieval)
+    const products = [
+      { name: 'Product 1', price: 10.00 },
+      { name: 'Product 2', price: 15.00 },
+      // ... more products
+    ];
+
+    function displayProducts() {
+      productList.innerHTML = ''; // Clear existing list
+      products.forEach(product => {
+        const listItem = document.createElement('li');
+        listItem.innerText = `${product.name} - $${product.price}`;
+        listItem.addEventListener('click', () => addToCart(product));
+        productList.appendChild(listItem);
+      });
+    }
+
+    function addToCart(product) {
+      cartItems.push(product);
+      updateCartList();
+      calculateTotalPrice();
+    }
+
+    function updateCartList() {
+      cartList.innerHTML = ''; // Clear existing list
+      cartItems.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.innerText = `${item.name} - $${item.price}`;
+        // Add option to remove item from cart (not implemented here)
+        cartList.appendChild(listItem);
+      });
+    }
+
+    function calculateTotalPrice() {
+      let total = 0;
+      cartItems.forEach(item => total += item.price);
+      totalPriceSpan.innerText = total.toFixed(2);
+    }
+
+    displayProducts();
+  </script>
+</body>
+</html>
